@@ -30,7 +30,7 @@ defmodule Genetics do
     Enum.reduce(population, [], fn {p1, p2}, acc ->
       cx_point = :rand.uniform(length(p1.genes))
       {{h1, t1}, {h2, t2}} = {Enum.split(p1.genes, cx_point), Enum.split(p2.genes, cx_point)}
-      {c1, c2} = {%Chromosome{genes: h1 ++ t2}, %Chromosome{genes: h2 ++ t1}}
+      {c1, c2} = {%Chromosome{p1 | genes: h1 ++ t2}, %Chromosome{p2 | genes: h2 ++ t1}}
       [c1 | [c2 | acc]]
     end)
   end
@@ -39,7 +39,7 @@ defmodule Genetics do
     population
     |> Enum.map(fn chromosome ->
       if :rand.uniform() < 0.05 do
-        %Chromosome{genes: Enum.shuffle(chromosome.genes)}
+        %Chromosome{chromosome | genes: Enum.shuffle(chromosome.genes)}
       else
         chromosome
       end
@@ -56,7 +56,7 @@ defmodule Genetics do
   def evolve(population, problem, opts \\ []) do
     population = evaluate(population, &problem.fitness_function/1, opts)
     best = hd(population)
-    IO.write("\rCurrency Best: #{best.fitness}")
+    IO.write("\rCurrency Best: #{best.fitness} - genes: #{best.genes}")
 
     if problem.terminate?(population) do
       best
