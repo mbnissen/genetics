@@ -4,8 +4,9 @@ defmodule Speller do
   alias Types.Chromosome
 
   def genotype do
-    genes = Stream.repeatedly(fn -> Enum.random(?a..?z) end)
-    |> Enum.take(34)
+    genes =
+      Stream.repeatedly(fn -> Enum.random(?a..?z) end)
+      |> Enum.take(34)
 
     %Chromosome{genes: genes, size: 34}
   end
@@ -17,7 +18,6 @@ defmodule Speller do
   end
 
   def terminate?([best | _]), do: best.fitness == 1
-
 end
 
 solution = Genetics.run(Speller)

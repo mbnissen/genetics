@@ -50,22 +50,27 @@ defmodule Genetics do
     population = initialize(&problem.genotype/0, opts)
 
     population
-    |> evolve(problem, opts)
+    |> evolve(problem, 0, 0, 0, opts)
   end
 
-  def evolve(population, problem, opts \\ []) do
+  def evolve(population, problem, generation, last_max_fitness, temperature, opts \\ []) do
     population = evaluate(population, &problem.fitness_function/1, opts)
-    best = hd(population)
+    best = Enum.max_by(population, &problem.fitness_function/1)
+    best_fitness = best.fitness
+    cooling_rate = Keyword.get(opts, :cooling_rate, 0.2)
+    temperature = (1 - cooling_rate) * (temperature + (best_fitness - last_max_fitness))
     IO.write("\rCurrency Best: #{best.fitness} - genes: #{best.genes}")
 
-    if problem.terminate?(population) do
+    if problem.terminate?(population, generation, temperature) do
       best
     else
+      generation = generation + 1
+
       population
       |> select(opts)
       |> crossover(opts)
       |> mutation(opts)
-      |> evolve(problem, opts)
+      |> evolve(problem, generation, best_fitness, temperature, opts)
     end
   end
 end
