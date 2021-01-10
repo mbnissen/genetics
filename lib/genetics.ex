@@ -59,7 +59,7 @@ defmodule Genetics do
     best_fitness = best.fitness
     cooling_rate = Keyword.get(opts, :cooling_rate, 0.2)
     temperature = (1 - cooling_rate) * (temperature + (best_fitness - last_max_fitness))
-    IO.write("\rCurrency Best: #{best.fitness} - genes: #{best.genes}")
+    IO.write("\rCurrency Best: #{best.fitness}")
 
     if problem.terminate?(population, generation, temperature) do
       best
